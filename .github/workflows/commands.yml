@@ -31,3 +31,9 @@ jobs:
                  body: bodycmt
                })
              }
+             github.rest.reactions.createForIssueComment({
+              comment_id: ${{ github.event.comment.id }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              content: 'rocket'
+            })
