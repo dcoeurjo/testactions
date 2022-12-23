@@ -40,7 +40,8 @@ jobs:
         uses: actions/github-script@v6
         if: steps.get_round.outputs.result == 'echo'
         with:
-        script: |
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
             //get pullrequest url
             github.rest.issues.createComment({
               issue_number: context.issue.number,
