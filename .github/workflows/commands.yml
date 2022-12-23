@@ -23,16 +23,28 @@ jobs:
          script: |
              const bodycmt = context.payload.comment.body
              if(bodycmt.includes("/echo:"))
-             {
-               github.rest.issues.createComment({
-                 issue_number: context.issue.number,
-                 owner: context.repo.owner,
-                 repo: context.repo.repo,
-                 body: bodycmt
-               })
-             }
-             github.rest.reactions.createForIssueComment({
+               return 'echo'
+             return 'stop'
+      - name: Emoji-comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.rest.reactions.createForIssueComment({
               comment_id: ${{ github.event.comment.id }},
               owner: context.repo.owner,
               repo: context.repo.repo,
               content: 'rocket'})
+
+      - name: Echo action
+        uses: actions/github-script@v6
+        if: steps.get_round.outputs.result == 'echo'
+        with:
+        script: |
+            //get pullrequest url
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: bodycmt
+            })
