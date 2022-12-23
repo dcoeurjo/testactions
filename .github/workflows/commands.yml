@@ -25,6 +25,7 @@ jobs:
              if(bodycmt.includes("/echo:"))
                return 'echo'
              return 'stop'
+
       - name: Emoji-comment
         uses: actions/github-script@v6
         with:
@@ -42,10 +43,33 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            //get pullrequest url
+            const bodycmt = context.payload.comment.body
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: bodycmt
             })
+
+      - uses: actions/checkout@v3
+        name: "checkout branch"
+        if: steps.get_round.outputs.result != 'stop'
+        with:
+           repository: ${{ github.repository }}
+           ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
+#           token: ${{ secrets.PUSH_TO_DGTAL_GITHUB_IO_TOKEN }}
+           fetch-depth: 2
+
+      - name: install dependencies
+        if: steps.get_round.outputs.result != 'stop'
+        run: |
+          set -x
+          sudo apt-get update && sudo apt-get install -y graphviz ssh doxygen
+          git config --global user.email "dgtal@dgtal.org"
+          git config --global user.name "DGtal"
+      - name: configure all
+        if: steps.get_round.outputs.result != 'stop'
+        run: |
+          set -ex
+          mkdir -p build_doc
+          
