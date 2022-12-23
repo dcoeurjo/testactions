@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   build:
+
     permissions:
       contents: read # to fetch code (actions/checkout)
       pull-requests: write # to create comment
@@ -18,12 +19,11 @@ jobs:
       - uses: actions/github-script@v6
         id: get_round
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
+         result-encoding: string
+         script: |
              const bodycmt = context.payload.comment.body
              if(bodycmt.includes("/echo:"))
              {
-               const re = s/\/echo://;
                github.rest.issues.createComment({
                  issue_number: context.issue.number,
                  owner: context.repo.owner,
@@ -31,15 +31,3 @@ jobs:
                  body: bodycmt
                })
              }
-
-      - name: Emoji-comment
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.rest.reactions.createForIssueComment({
-              comment_id: ${{ github.event.comment.id }},
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              content: 'rocket'
-            })
