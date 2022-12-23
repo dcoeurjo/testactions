@@ -1,0 +1,33 @@
+name: Commands
+
+on:
+  issue_comment:
+      types: [created]
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  build:
+
+    permissions:
+      contents: read # to fetch code (actions/checkout)
+      pull-requests: write # to create comment
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        id: get_round
+        with:
+         result-encoding: string
+         script: |
+             const bodycmt = context.payload.comment.body
+             if(bodycmt.includes("echo:")) {
+               const re = /\/echo:(\w+)\s*/;
+               github.rest.issues.createComment({
+                 issue_number: context.issue.number,
+                 owner: context.repo.owner,
+                 repo: context.repo.repo,
+                 body: bodycmt
+               })
+             }
