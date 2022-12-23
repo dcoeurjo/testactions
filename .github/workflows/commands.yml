@@ -51,6 +51,16 @@ jobs:
               body: bodycmt
             })
 
+      - uses: actions/github-script@v6
+        if: steps.get_round.outputs.result != 'stop'
+        id: get_pr_number
+        with:
+         result-encoding: string
+         script: |
+           //get pullrequest url
+           const pr_number = context.payload.issue.number
+           return pr_number
+
       - uses: actions/checkout@v3
         name: "checkout branch"
         if: steps.get_round.outputs.result != 'stop'
@@ -72,4 +82,3 @@ jobs:
         run: |
           set -ex
           mkdir -p build_doc
-          
