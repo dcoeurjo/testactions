@@ -35,5 +35,4 @@ jobs:
               comment_id: ${{ github.event.comment.id }},
               owner: context.repo.owner,
               repo: context.repo.repo,
-              content: 'rocket'
-            })
+              content: 'rocket'})
